@@ -1,4 +1,4 @@
-# Bienvenido a nuestro repo
+# Bienvenido a mi repo
 Este repositorio está dedicado a las actividades individuales del curso LDAW Ago-Dic 2019.
 
 Irving Alain Aguilar Pérez (A01703171)
@@ -15,6 +15,7 @@ Las ramas principales serán:
 
 - master
 - develop
+
 Véase el sitio web para más información acerca del modelo de ramas de Driessen: https://nvie.com/posts/a-successful-git-branching-model/
 
 ## Demostraciones
