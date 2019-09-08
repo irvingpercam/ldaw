@@ -1,60 +1,60 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-class Square extends React.Component {
-  /*Constructor para estado
-  Queremos que el componente Square "recuerde" los clicks, a su vez llenando la casilla
-  correspondiente con una "X". El valor actual de square es guardado en "this.state" y
-  este cambia cuando Square es clickeado.
-  */
-  // constructor(props){
-  //   /**
-  //    * En las clases de JavaScript siempre se debe llamar al método super cuando se define
-  //    * un constructor de una subclase.
-  //    * 
-  //    * Todas clases de componentes de React que tienen un constructor deben empezar con una
-  //    * llamada a super (props).
-  //    */
-  //   super(props);
-  //   this.state = {
-  //     value: null,
-  //   };
-  // }
-  // Este constructor queda como comentario, ya que en cierta parte del tutorial, el constructor
-  // se debe eliminar porque el componente ya no hace seguimiento del estado del juego.
+// class Square extends React.Component {
+//   /*Constructor para estado
+//   Queremos que el componente Square "recuerde" los clicks, a su vez llenando la casilla
+//   correspondiente con una "X". El valor actual de square es guardado en "this.state" y
+//   este cambia cuando Square es clickeado.
+//   */
+//   // constructor(props){
+//   //   /**
+//   //    * En las clases de JavaScript siempre se debe llamar al método super cuando se define
+//   //    * un constructor de una subclase.
+//   //    * 
+//   //    * Todas clases de componentes de React que tienen un constructor deben empezar con una
+//   //    * llamada a super (props).
+//   //    */
+//   //   super(props);
+//   //   this.state = {
+//   //     value: null,
+//   //   };
+//   // }
+//   // Este constructor queda como comentario, ya que en cierta parte del tutorial, el constructor
+//   // se debe eliminar porque el componente ya no hace seguimiento del estado del juego.
   
-  /**
-    * Cuando un cuadrado es clickeado, la función onClick provista por el componente Board
-    * es llamada.
-    * 
-    * 1. El prop onClick le indica a React que establezca un escuchador del evento Click.
-    * 2. Cuando el botón es clickeado, React llama al manejador de evento onClick que está
-    * definido en el método render() de Square.
-    * 3. El manejador de evento, llama a this.props.onClick(). El prop onClick del compone-
-    * nte onClick está especificado por el componente Board.
-    * 4. Dado que en Board pasa onClick = {() => this.handleClick{i}} a Square, el compone-
-    * nte Square llama a this.handleClick(i) cuando es clickeado.
-    */
-    render() {
-      return (
-        <button 
-          className="square" 
-          /**
-           * Se muestra el valor del estado actual cuando es clickeado.
-           * Llamar a this.setState desde el manejador onClick en el método render, indicamos
-           * a React que re-renderice el cuadrado cuando el button en clickeado. Posteriormente,
-           * el valor del estado "this.state.value" cambiará al valor de "X". Cuando se llama
-           * a setState en un componente, React actualiza automáticamente los componentes hijos
-           * dentro del mismo.
-           */
+//   /**
+//     * Cuando un cuadrado es clickeado, la función onClick provista por el componente Board
+//     * es llamada.
+//     * 
+//     * 1. El prop onClick le indica a React que establezca un escuchador del evento Click.
+//     * 2. Cuando el botón es clickeado, React llama al manejador de evento onClick que está
+//     * definido en el método render() de Square.
+//     * 3. El manejador de evento, llama a this.props.onClick(). El prop onClick del compone-
+//     * nte onClick está especificado por el componente Board.
+//     * 4. Dado que en Board pasa onClick = {() => this.handleClick{i}} a Square, el compone-
+//     * nte Square llama a this.handleClick(i) cuando es clickeado.
+//     */
+//     render() {
+//       return (
+//         <button 
+//           className="square" 
+//           /**
+//            * Se muestra el valor del estado actual cuando es clickeado.
+//            * Llamar a this.setState desde el manejador onClick en el método render, indicamos
+//            * a React que re-renderice el cuadrado cuando el button en clickeado. Posteriormente,
+//            * el valor del estado "this.state.value" cambiará al valor de "X". Cuando se llama
+//            * a setState en un componente, React actualiza automáticamente los componentes hijos
+//            * dentro del mismo.
+//            */
 
-          onClick = {() => this.props.onClick()}
-          >
-          {this.props.value}
-        </button>
-      );
-    }
-  }
+//           onClick = {() => this.props.onClick()}
+//           >
+//           {this.props.value}
+//         </button>
+//       );
+//     }
+//   }
 /**
  * Se va a almacenar el estado del juego en el componente padre Board en vez de cada componente
  * Square. El componente Board puede decirle a cada cuadrado que mostrar pasándole un prop.
@@ -64,6 +64,20 @@ class Square extends React.Component {
  * pasar el estado hacia los hijos usando props, así manteniendo los componentes hijos sincro-
  * nizados entre ellos y con su componente padre.
  */  
+
+/**
+ * Componentes de función
+ * 
+ * Se escribe una función que toma props como parámetros y retorna lo que se debe renderizar.
+ */
+function Square(props){
+  return (
+    <button className="square" onClick={props.onClick}>
+      {props.value}
+    </button>
+  );
+}
+
 class Board extends React.Component {
 /**
  * Se añade un constructor para establecer el estado inicial de Board para contener un arreglo
@@ -75,12 +89,46 @@ class Board extends React.Component {
       squares: Array(9).fill(null),
     };
   }
-
+  /**
+   * Gracias a este método, el estado está almacenado en el componente Board en lugar de almace-
+   * narlo en cada componente Square. Cuando el estado del Board cambia, los componentes Square
+   * se re-renderizan automáticamente. Mantener el estado de todos los cuadrados en el componente
+   * Board permite ayudar a determinar el ganador.
+   * 
+   * Los componentes Square reciben valores del componente Board e informan al mismo cuando son
+   * clickeados. Para términos de React, los componentes Square son componentes controlados.
+   */
   handleClick(i) {
-    const squares = this.state.squares.slice();
+    // Principio de Inmutabilidad
+    const squares = this.state.squares.slice(); //slice() crea una copia del array de squares
+    // posteriormente, esta copia se utiliza para realizar modificaciones, conservando el arrar
+    //original
     squares[i] = 'X';
     this.setState({squares: squares});
   }
+  /**
+   * Haciendo referencia al principio de inmutabilidad, se decriben los siguientes beneficios:
+   * 
+   * Las funciones complejas se vuelven más simples
+   * 
+   * Esto nos sirve en el proyecto actual para poder realizar la parte de "viaje en el tiempo",
+   * o bien, repasar el historial de movimientos. En general, esto se puede utilizar en el software
+   * para realizar funciones de "hacer" y "deshacer".
+   * La inmutabilidad permite mantener intactas versiones previas del historial del juego, para
+   * reusarlas posteriormente.
+   * 
+   * Detectar cambios
+   * 
+   * Detectar cambios inmutables es más sencillo. Si el objeto inmutable al que se está haciendo
+   * referencia es diferente del anterior, significa que este objeto ha cambiado.
+   * 
+   * Determinar cuando re-renderizar en React
+   * 
+   * Esto nos ayuda a construir componentes puros en React. Los datos inmutables nos pueden ayudar
+   * a determinar fácilmente si se realizó algún cambio, y con esto podemos determinar cuando un
+   * componente requiere ser re-renderizado, esto nos ayuda a optimizar el rendimiento. 
+   * Véase el método shouldComponentUpdate().
+   */
 
   /**
    * Modificamos este método renderSquare para que lea desde el arreglo.
