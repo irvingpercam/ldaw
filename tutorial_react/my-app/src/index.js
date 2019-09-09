@@ -87,6 +87,14 @@ class Board extends React.Component {
     super(props);
     this.state = {
       squares: Array(9).fill(null),
+      /**
+       * Para la parte de tomar turnos, se establece el primer movimiento a ser una "X" por
+       * defecto modificando el estado inicial en el constructor del componente Board.
+       * 
+       * Cada que el jugador realice un movimiento, xIsNext (booleano) será invertido para
+       * determinar el jugador que sigue y guardar el estado correspondiente.
+       */
+      xIsNext: true,
     };
   }
   /**
@@ -103,8 +111,11 @@ class Board extends React.Component {
     const squares = this.state.squares.slice(); //slice() crea una copia del array de squares
     // posteriormente, esta copia se utiliza para realizar modificaciones, conservando el arrar
     //original
-    squares[i] = 'X';
-    this.setState({squares: squares});
+    squares[i] = this.state.xIsNext ? 'X' : 'O';
+    this.setState({
+      squares: squares,
+      xIsNext: !this.state.xIsNext, //Esta linea invierte el valor de xIsNext para tomar turnos.
+      });
   }
   /**
    * Haciendo referencia al principio de inmutabilidad, se decriben los siguientes beneficios:
@@ -148,7 +159,8 @@ class Board extends React.Component {
 }
 
 render() {
-    const status = 'Next player: X';
+    //Esta línea ayuda a mostrar en el Board qué jugador tiene el siguiente turno.
+    const status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
 
     return (
     <div>
