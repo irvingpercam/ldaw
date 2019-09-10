@@ -250,6 +250,24 @@ class Game extends React.Component {
       const history = this.state.history;
       const current = history[history.length - 1];
       const winner = calculateWinner(current.squares);
+    /**
+     * Mapeando el historial de movimientos a elementos de React presentando botones en pantalla, y
+     * mostrando una lista de botones para "saltar" a movimientos anteriores.
+     */
+      const moves = history.map((step, move) => {
+        const desc = move ?
+        'Go to move #' + move :
+        'Go to move game start';
+        return (
+          /**
+           * Por cada movimiento en el historial de juego, creamos un elemento de lista <li> que
+           * contiene un boton <button>.
+           */
+          <li>
+            <button onClick={() => this.jumpTo(move)}>{desc}</button>
+          </li>
+        );
+      });
       let status;
       if (winner){
         status = 'Winner: ' + winner;
@@ -266,7 +284,7 @@ class Game extends React.Component {
           </div>
           <div className="game-info">
           <div>{status}</div>
-          <ol>{/* TODO */}</ol>
+          <ol>{moves}</ol>
           </div>
       </div>
       );
