@@ -183,6 +183,7 @@ render() {
     // }
     return (
     <div>
+        <div className="status">{status}</div>
         <div className="board-row">
         {this.renderSquare(0)}
         {this.renderSquare(1)}
@@ -223,7 +224,7 @@ class Game extends React.Component {
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
     const current = history[history.length -1];
     // Principio de Inmutabilidad
-    const squares = current.squares.slice(); //slice() crea una copia del array de squares
+    const squares = this.state.squares.slice(); //slice() crea una copia del array de squares
     // posteriormente, esta copia se utiliza para realizar modificaciones, conservando el arrar
     //original
     // La siguiente condición retorna si alguien ha ganado el juego, o bien, si un cuadrado ya está
