@@ -83,20 +83,23 @@ class Board extends React.Component {
  * Se añade un constructor para establecer el estado inicial de Board para contener un arreglo
  * con 9 valores nulos (null). Estos 9 valores corresponden a los 9 cuadrados.
  */
-  constructor(props){
-    super(props);
-    this.state = {
-      squares: Array(9).fill(null),
-      /**
-       * Para la parte de tomar turnos, se establece el primer movimiento a ser una "X" por
-       * defecto modificando el estado inicial en el constructor del componente Board.
-       * 
-       * Cada que el jugador realice un movimiento, xIsNext (booleano) será invertido para
-       * determinar el jugador que sigue y guardar el estado correspondiente.
-       */
-      xIsNext: true,
-    };
-  }
+  /**
+   * Se elimina el constructor para transformar el componente Board.
+   */
+  // constructor(props){
+  //   super(props);
+  //   this.state = {
+  //     squares: Array(9).fill(null),
+  //     /**
+  //      * Para la parte de tomar turnos, se establece el primer movimiento a ser una "X" por
+  //      * defecto modificando el estado inicial en el constructor del componente Board.
+  //      * 
+  //      * Cada que el jugador realice un movimiento, xIsNext (booleano) será invertido para
+  //      * determinar el jugador que sigue y guardar el estado correspondiente.
+  //      */
+  //     xIsNext: true,
+  //   };
+  // }
   /**
    * Gracias a este método, el estado está almacenado en el componente Board en lugar de almace-
    * narlo en cada componente Square. Cuando el estado del Board cambia, los componentes Square
@@ -106,22 +109,22 @@ class Board extends React.Component {
    * Los componentes Square reciben valores del componente Board e informan al mismo cuando son
    * clickeados. Para términos de React, los componentes Square son componentes controlados.
    */
-  handleClick(i) {
-    // Principio de Inmutabilidad
-    const squares = this.state.squares.slice(); //slice() crea una copia del array de squares
-    // posteriormente, esta copia se utiliza para realizar modificaciones, conservando el arrar
-    //original
-    // La siguiente condición retorna si alguien ha ganado el juego, o bien, si un cuadrado ya está
-    // rellenado.
-    if (calculateWinner(squares) || squares[i]){
-      return;
-    }
-    squares[i] = this.state.xIsNext ? 'X' : 'O';
-    this.setState({
-      squares: squares,
-      xIsNext: !this.state.xIsNext, //Esta linea invierte el valor de xIsNext para tomar turnos.
-      });
-  }
+  // handleClick(i) {
+  //   // Principio de Inmutabilidad
+  //   const squares = this.state.squares.slice(); //slice() crea una copia del array de squares
+  //   // posteriormente, esta copia se utiliza para realizar modificaciones, conservando el arrar
+  //   //original
+  //   // La siguiente condición retorna si alguien ha ganado el juego, o bien, si un cuadrado ya está
+  //   // rellenado.
+  //   if (calculateWinner(squares) || squares[i]){
+  //     return;
+  //   }
+  //   squares[i] = this.state.xIsNext ? 'X' : 'O';
+  //   this.setState({
+  //     squares: squares,
+  //     xIsNext: !this.state.xIsNext, //Esta linea invierte el valor de xIsNext para tomar turnos.
+  //     });
+  // }
   /**
    * Haciendo referencia al principio de inmutabilidad, se decriben los siguientes beneficios:
    * 
@@ -157,8 +160,8 @@ class Board extends React.Component {
   renderSquare(i) {
     return (
       <Square 
-        value = {this.state.squares[i]}
-        onClick = {() => this.handleClick(i)} 
+        value = {this.props.squares[i]}
+        onClick = {() => this.props.onClick(i)} 
         />
     );
 }
@@ -167,13 +170,17 @@ render() {
     // //Esta línea ayuda a mostrar en el Board qué jugador tiene el siguiente turno.
     // const status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
     // Se manda a llamar a la función "calculateWinner", para revisar si un jugador ha ganado.
-    const winner = calculateWinner(this.state.squares);
-    let status;
-    if (winner){
-      status = 'Winner: ' + winner;
-    } else {
-      status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O')
-    }
+    /**
+     * Dado que el componente está renderizando el estado del juego, podemos eliminar el código
+     * correspondiente del método render.
+     */
+    // const winner = calculateWinner(this.state.squares);
+    // let status;
+    // if (winner){
+    //   status = 'Winner: ' + winner;
+    // } else {
+    //   status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O')
+    // }
     return (
     <div>
         <div className="status">{status}</div>
@@ -196,21 +203,74 @@ render() {
     );
 }
 }
-
+/**
+ * Para que el componente superior Game pueda mostrar los un historial de movimiento, se le otorga
+ * acceso a al historial, por lo que se coloca el estado history dentro del componente "Game".
+ * Dicho estado, da completo control sobre el "Board" al componente Game, esto permite que el
+ * tablero pueda renderizar los turnos previos desde history.
+ */
 class Game extends React.Component {
-render() {
-    return (
-    <div className="game">
-        <div className="game-board">
-        <Board />
-        </div>
-        <div className="game-info">
-        <div>{/* status */}</div>
-        <ol>{/* TODO */}</ol>
-        </div>
-    </div>
-    );
-}
+  constructor(props){
+    super(props);
+    this.state = {
+      history: [{
+        squares: Array(9).fill(null),
+      }],
+      xIsNext: true,
+    }
+  }
+  handleClick(i) {
+    const history = this.state.history;
+    const current = history[history.length -1];
+    // Principio de Inmutabilidad
+    const squares = this.state.squares.slice(); //slice() crea una copia del array de squares
+    // posteriormente, esta copia se utiliza para realizar modificaciones, conservando el arrar
+    //original
+    // La siguiente condición retorna si alguien ha ganado el juego, o bien, si un cuadrado ya está
+    // rellenado.
+    if (calculateWinner(squares) || squares[i]){
+      return;
+    }
+    squares[i] = this.state.xIsNext ? 'X' : 'O';
+    this.setState({
+      /**
+       * A diferencua de push(), el método concat() no muta el array original.
+       */
+      history: history.concat([{
+        squares: squares,
+      }]),
+      xIsNext: !this.state.xIsNext, //Esta linea invierte el valor de xIsNext para tomar turnos.
+      });
+  }
+  render() {
+    /**
+     * Se actualiza el método render para usar la entrada más reciente del historial para determinar
+     * y mostrar el estado del juego.
+     */
+      const history = this.state.history;
+      const current = history[history.length - 1];
+      const winner = calculateWinner(current.squares);
+      let status;
+      if (winner){
+        status = 'Winner: ' + winner;
+      } else {
+        status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+      }
+      return (
+      <div className="game">
+          <div className="game-board">
+          <Board 
+            squares = {current.squares}
+            onClick={(i) => this.handleClick(i)}
+          />
+          </div>
+          <div className="game-info">
+          <div>{status}</div>
+          <ol>{/* TODO */}</ol>
+          </div>
+      </div>
+      );
+  }
 }
 
 // ========================================
