@@ -1,0 +1,8 @@
+Info
+
+Se implementó el framework de Laravel.
+
+En el video se muestra una breve demostración de la implementación,
+además de mostrar la version de Laravel, PHP y MySQL.
+
+Para correr la aplicación se hace uso de la herramienta de Valet.
