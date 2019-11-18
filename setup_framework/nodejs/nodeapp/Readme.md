@@ -1,4 +1,4 @@
-# Sample nodejs application with docker Conatiner
+# Nodejs application setup with docker
 
 
 # Installation
